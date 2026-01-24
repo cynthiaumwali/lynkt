@@ -24,11 +24,11 @@ export default function MarkdownEditor({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Toolbar */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-750 flex items-center justify-between">
         <h2 className="font-semibold text-gray-900 dark:text-white">
-          {showPreview ? '📄 Preview' : '✏️ Editor'}
+          {showPreview ? 'Preview' : 'Editor'}
         </h2>
         <button
           onClick={() => setShowPreview(!showPreview)}
@@ -40,7 +40,7 @@ export default function MarkdownEditor({
 
       {/* Content */}
       {showPreview ? (
-        <div className="p-8 prose dark:prose-invert max-w-none min-h-[600px]">
+        <div className="p-8 prose dark:prose-invert max-w-none min-h-150">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {content || '*No content yet*'}
           </ReactMarkdown>
@@ -49,7 +49,7 @@ export default function MarkdownEditor({
         <textarea
           value={content}
           onChange={(e) => handleChange(e.target.value)}
-          className="w-full h-[600px] p-6 bg-transparent focus:outline-none resize-none font-mono text-sm text-gray-900 dark:text-gray-100"
+          className="w-full h-150 p-6 bg-transparent focus:outline-none resize-none font-mono text-sm text-gray-900 dark:text-gray-100"
           placeholder={`Write your documentation in Markdown...
 
 Example:

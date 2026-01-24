@@ -3,6 +3,7 @@
 'use client';
 
 import { Document } from '@/types';
+import { Delete } from 'lucide-react';
 import Link from 'next/link';
 
 interface DocumentListProps {
@@ -41,12 +42,12 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
       {documents.map((doc) => (
         <div
           key={doc.id}
-          className="rounded-lg p-6 shadow-sm border border-border hover:shadow-md transition"
+          className="rounded-lg p-6 border border-border transition hover:scale-[1.03]"
         >
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <Link href={`/editor?id=${doc.id}`}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white cursor-pointer">
                   {doc.title}
                 </h2>
               </Link>
@@ -58,7 +59,7 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
               onClick={() => handleDelete(doc.id, doc.title)}
               className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
             >
-              
+              <Delete className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" />
             </button>
           </div>
         </div>

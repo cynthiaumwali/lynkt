@@ -49,9 +49,9 @@ export default function HomePage() {
             </div>
             <Link
               href="/editor"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm"
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition text-sm"
             >
-              + New Doc
+              + Add New Document
             </Link>
           </div>
         </div>

@@ -2,6 +2,7 @@
 'use client';
 
 import { CodeLink } from '@/types';
+import { AlertCircle, Check, Lamp, Paperclip } from 'lucide-react';
 
 interface CodeLinksSidebarProps {
   codeLinks: CodeLink[];
@@ -9,10 +10,10 @@ interface CodeLinksSidebarProps {
   isChecking: boolean;
 }
 
-export default function CodeLinksSidebar({ 
-  codeLinks, 
+export default function CodeLinksSidebar({
+  codeLinks,
   onCheckChanges,
-  isChecking 
+  isChecking
 }: CodeLinksSidebarProps) {
   const staleCount = codeLinks.filter(link => link.isStale).length;
   const upToDateCount = codeLinks.length - staleCount;
@@ -31,11 +32,11 @@ export default function CodeLinksSidebar({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-6">
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 bg-gray-50 dark:bg-gray-750">
         <h2 className="font-semibold text-gray-900 dark:text-white">
-          🔗 Linked Code
+          <Paperclip className="inline size-4" /> Linked Code
         </h2>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {codeLinks.length} file{codeLinks.length !== 1 ? 's' : ''} linked
@@ -47,7 +48,7 @@ export default function CodeLinksSidebar({
         <button
           onClick={onCheckChanges}
           disabled={isChecking || codeLinks.length === 0}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center justify-center gap-2"
+          className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center justify-center gap-2 text-sm"
         >
           {isChecking ? (
             <>
@@ -56,7 +57,6 @@ export default function CodeLinksSidebar({
             </>
           ) : (
             <>
-              <span>🔄</span>
               Check for Changes
             </>
           )}
@@ -79,12 +79,15 @@ export default function CodeLinksSidebar({
             >
               {/* Status Badge */}
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">{link.isStale ? '⚠️' : '✅'}</span>
-                <span className={`text-xs font-semibold px-2 py-1 rounded ${
-                  link.isStale 
-                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' 
+                <span className="text-lg">{link.isStale ? (
+                  <AlertCircle className="text-yellow-600 dark:text-yellow-400" />
+                ) : (
+                  <Check className="text-green-600 dark:text-green-400" />
+                )}</span>
+                <span className={`text-xs font-semibold px-2 py-1 rounded ${link.isStale
+                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                     : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                }`}>
+                  }`}>
                   {link.isStale ? 'STALE' : 'UP TO DATE'}
                 </span>
               </div>
@@ -107,7 +110,7 @@ export default function CodeLinksSidebar({
               {/* Stale Warning */}
               {link.isStale && (
                 <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded text-xs text-yellow-800 dark:text-yellow-400">
-                  ⚡ Code changed - review needed
+                  <Lamp className="text-yellow-200" /> Code changed - review needed
                 </div>
               )}
             </div>

@@ -1,5 +1,3 @@
-// app/editor/page.tsx - Document editor page
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CodeLink } from '@/types';
 import CodeLinksSidebar from '@/components/editor/CodeLinksSidebar';
 import MarkdownEditor from '@/components/editor/MarkdownEditor';
+import { toast } from 'sonner';
 
 export default function EditorPage() {
   const router = useRouter();
@@ -63,12 +62,13 @@ export default function EditorPage() {
         if (!docId) {
           router.push(`/editor?id=${savedDoc.id}`);
         } else {
-          alert('Document saved!');
+          toast.success('Document saved successfully');
+          router.push('/')
         }
       }
     } catch (error) {
       console.error('Error saving document:', error);
-      alert('Error saving document');
+      toast.error('Error saving document');
     } finally {
       setSaving(false);
     }
@@ -76,7 +76,7 @@ export default function EditorPage() {
 
   const handleCheckChanges = async () => {
     if (!docId) {
-      alert('Save the document first');
+      toast.error('Save the document first');
       return;
     }
 
@@ -90,26 +90,23 @@ export default function EditorPage() {
 
       if (res.ok) {
         const result = await res.json();
-        
-        // Refresh code links
         const docRes = await fetch(`/api/docs?id=${docId}`);
         const doc = await docRes.json();
         setCodeLinks(doc.codeLinks || []);
 
-        alert(`Checked ${result.totalLinks} files. ${result.staleLinks} are stale.`);
+        toast.success(`Checked ${result.totalLinks} files. ${result.staleLinks} are stale.`);
       }
     } catch (error) {
       console.error('Error checking changes:', error);
-      alert('Error checking for changes');
+      toast.error('Error checking for changes');
     } finally {
       setChecking(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+    <div className="min-h-screen">
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -121,7 +118,7 @@ export default function EditorPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition font-medium shadow-sm"
+              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
             >
               {saving ? 'Saving...' : 'Save'}
             </button>
@@ -137,7 +134,7 @@ export default function EditorPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Document Title"
-          className="w-full px-6 py-4 mb-6 text-2xl font-bold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          className="w-full px-6 py-4 mb-6 text-2xl font-bold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         {/* Editor + Sidebar */}
@@ -152,7 +149,7 @@ export default function EditorPage() {
             {/* Helper Text */}
             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                💡 <strong>Tip:</strong> Link to code using syntax:{' '}
+                <strong>Tip:</strong> Link to code using syntax:{' '}
                 <code className="px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded font-mono text-xs">
                   github:repo/file.js#L10-20
                 </code>
@@ -160,7 +157,7 @@ export default function EditorPage() {
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Links + Status Sidebar */}
           <div className="lg:col-span-1">
             <CodeLinksSidebar
               codeLinks={codeLinks}
