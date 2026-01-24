@@ -1,5 +1,3 @@
-// app/api/github/check/route.ts - Check for code changes
-
 import { NextRequest, NextResponse } from 'next/server';
 import { store } from '@/lib/store';
 import { checkCodeChanged } from '@/lib/github';

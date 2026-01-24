@@ -1,5 +1,3 @@
-//  Documents API endpoints
-
 import { NextRequest, NextResponse } from 'next/server';
 import { store } from '@/lib/store';
 import { parseGitHubLinks, fetchGitHubCode, generateHash } from '@/lib/github';
