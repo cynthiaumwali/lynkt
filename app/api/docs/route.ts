@@ -1,15 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { store } from '@/lib/store';
+import {
+  getAllDocuments,
+  getDocument,
+  createDocument,
+  updateDocument,
+  deleteDocument,
+  getCodeLinksForDocument,
+  createCodeLink,
+  deleteCodeLinksForDocument,
+} from '@/lib/supabase';
 import { parseGitHubLinks, fetchGitHubCode, generateHash } from '@/lib/github';
 
-// GET /api/docs - Get all documents or single document
+// GET /api/docs
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (id) {
-      const doc = store.getDocument(id);
+      const doc = await getDocument(id);
       if (!doc) {
         return NextResponse.json(
           { error: 'Document not found' },
@@ -17,12 +26,11 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Include code links
-      const codeLinks = store.getCodeLinksForDocument(id);
+      const codeLinks = await getCodeLinksForDocument(id);
       return NextResponse.json({ ...doc, codeLinks });
     }
 
-    const docs = store.getAllDocuments();
+    const docs = await getAllDocuments();
     return NextResponse.json(docs);
   } catch (error) {
     console.error('GET /api/docs error:', error);
@@ -33,7 +41,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/docs - Create new document
+// POST /api/docs
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -46,14 +54,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create document
-    const doc = store.createDocument({
-      title: title.trim(),
-      content: content || '',
-      codeLinks: [],
-    });
+    const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const doc = await createDocument(id, title.trim(), content || '');
 
-    // Parse and create code links
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
@@ -63,23 +66,21 @@ export async function POST(request: NextRequest) {
           parsed.lineStart,
           parsed.lineEnd
         );
-        
-        return store.createCodeLink({
-          documentId: doc.id,
-          repo: parsed.repo,
-          filePath: parsed.filePath,
-          lineStart: parsed.lineStart,
-          lineEnd: parsed.lineEnd,
-          codeHash: generateHash(code),
-          isStale: false,
-        });
+
+        const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        return await createCodeLink(
+          linkId,
+          id,
+          parsed.repo,
+          parsed.filePath,
+          parsed.lineStart,
+          parsed.lineEnd,
+          generateHash(code)
+        );
       })
     );
 
-    return NextResponse.json(
-      { ...doc, codeLinks },
-      { status: 201 }
-    );
+    return NextResponse.json({ ...doc, codeLinks }, { status: 201 });
   } catch (error) {
     console.error('POST /api/docs error:', error);
     return NextResponse.json(
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/docs - Update document
+// PUT /api/docs
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
@@ -102,7 +103,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const doc = store.updateDocument(id, { title, content });
+    const doc = await updateDocument(id, title, content);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -110,8 +111,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Update code links
-    store.deleteCodeLinksForDocument(id);
+    await deleteCodeLinksForDocument(id);
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
@@ -121,16 +121,17 @@ export async function PUT(request: NextRequest) {
           parsed.lineStart,
           parsed.lineEnd
         );
-        
-        return store.createCodeLink({
-          documentId: id,
-          repo: parsed.repo,
-          filePath: parsed.filePath,
-          lineStart: parsed.lineStart,
-          lineEnd: parsed.lineEnd,
-          codeHash: generateHash(code),
-          isStale: false,
-        });
+
+        const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        return await createCodeLink(
+          linkId,
+          id,
+          parsed.repo,
+          parsed.filePath,
+          parsed.lineStart,
+          parsed.lineEnd,
+          generateHash(code)
+        );
       })
     );
 
@@ -144,7 +145,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE /api/docs - Delete document
+// DELETE /api/docs
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -157,15 +158,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    store.deleteCodeLinksForDocument(id);
-    const deleted = store.deleteDocument(id);
-
-    if (!deleted) {
-      return NextResponse.json(
-        { error: 'Document not found' },
-        { status: 404 }
-      );
-    }
+    await deleteCodeLinksForDocument(id);
+    await deleteDocument(id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
