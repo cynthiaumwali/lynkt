@@ -1,6 +1,5 @@
 import { CodeLink } from '@/types';
 import { createClient } from '@supabase/supabase-js';
-import { is } from 'date-fns/locale';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -30,10 +29,10 @@ export async function getDocument(id: string): Promise<Document | null> {
 }
 
 //create document
-export async function createDocument(title: string, content: string): Promise<Document> {
+export async function createDocument(id: string, title: string, content: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
-        .insert({ title, content })
+        .insert({ id, title, content })
         .select()
         .single();
     if (error) throw error;
@@ -84,10 +83,10 @@ export async function getCodeLink(id:string): Promise<CodeLink | null> {
 
 
 //create code link
-export async function createCodeLink(documentId: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
+export async function createCodeLink(id:string, documentId: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
     const {data, error} = await supabase
-    .from('code_links ')
-    .insert({ document_id: documentId, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
+    .from('code_links')
+    .insert({ id, document_id: documentId, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
     .select()
     .single();
     if (error) throw error;
@@ -104,3 +103,14 @@ export async function deleteCodeLinksForDocument(documentId: string): Promise<vo
   if (error) throw error;
 }
 
+//update code link
+export async function updateCodeLink(id: string, isStale: boolean, codeHash: string): Promise<CodeLink> {
+    const { data, error } = await supabase
+        .from('code_links')
+        .update({ is_stale: isStale, code_hash: codeHash, last_checked: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+    if (error) throw error;
+    return data as CodeLink;
+}
