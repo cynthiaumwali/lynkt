@@ -6,6 +6,7 @@ import { CodeLink } from '@/types';
 import CodeLinksSidebar from '@/components/editor/CodeLinksSidebar';
 import MarkdownEditor from '@/components/editor/MarkdownEditor';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function EditorClient() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function EditorClient() {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      alert('Please enter a title');
+      toast.error('Title is required');
       return;
     }
 
@@ -109,12 +110,7 @@ export default function EditorClient() {
       <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => router.push('/')}
-              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-            >
-              ← Back to Docs
-            </button>
+            <Link href="/" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">← Back to Docs</Link>
             <button
               onClick={handleSave}
               disabled={saving}
@@ -126,9 +122,7 @@ export default function EditorClient() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Title Input */}
         <input
           type="text"
           value={title}

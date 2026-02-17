@@ -31,7 +31,7 @@ export default function HomePage() {
       fetchDocuments();
     } catch (error) {
       console.error('Error deleting document:', error);
-    }
+    } 
   };
 
   return (

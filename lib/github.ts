@@ -92,9 +92,7 @@ export async function fetchGitHubCode(
   return code;
 }
 
-/**
- * Generate hash for code content
- */
+//  generate hash 
 export function generateHash(content: string): string {
   // Simple hash function for demo
   let hash = 0;
@@ -106,9 +104,7 @@ export function generateHash(content: string): string {
   return Math.abs(hash).toString(36);
 }
 
-/**
- * Check if the code has changed
- */
+//chack for code changes
 export async function checkCodeChanged(
   link: CodeLink
 ): Promise<{ isStale: boolean; currentHash: string }> {
