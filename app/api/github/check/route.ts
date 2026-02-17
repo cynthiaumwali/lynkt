@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { store } from '@/lib/store';
+import {
+  getDocument,
+  getCodeLinksForDocument,
+  updateCodeLink,
+} from '@/lib/supabase';
 import { checkCodeChanged } from '@/lib/github';
 
-// POST /api/github/check - Check if code has changed
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -15,7 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const doc = store.getDocument(documentId);
+    const doc = await getDocument(documentId);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -23,18 +26,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const codeLinks = store.getCodeLinksForDocument(documentId);
-    
-    // Check each code link
+    const codeLinks = await getCodeLinksForDocument(documentId);
+
     const results = await Promise.all(
       codeLinks.map(async (link) => {
         const { isStale, currentHash } = await checkCodeChanged(link);
-        
-        // Update link with new status
-        store.updateCodeLink(link.id, {
-          isStale,
-          codeHash: currentHash,
-        });
+
+        await updateCodeLink(link.id, isStale, currentHash);
 
         return {
           linkId: link.id,
@@ -50,7 +48,7 @@ export async function POST(request: NextRequest) {
       documentId,
       results,
       totalLinks: codeLinks.length,
-      staleLinks: results.filter(r => r.isStale).length,
+      staleLinks: results.filter((r) => r.isStale).length,
     });
   } catch (error) {
     console.error('POST /api/github/check error:', error);
