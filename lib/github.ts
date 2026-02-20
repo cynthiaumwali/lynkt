@@ -1,4 +1,4 @@
-// lib/github.ts - GitHub integration utilities
+//  GitHub integration utilities
 
 import { CodeLink } from '@/types';
 
@@ -110,13 +110,13 @@ export async function checkCodeChanged(
 ): Promise<{ isStale: boolean; currentHash: string }> {
   const currentCode = await fetchGitHubCode(
     link.repo,
-    link.filePath,
-    link.lineStart,
-    link.lineEnd
+    link.file_path,
+    link.line_start,
+    link.line_end
   );
   
   const currentHash = generateHash(currentCode);
-  const isStale = currentHash !== link.codeHash;
+  const isStale = currentHash !== link.code_hash;
   
   return { isStale, currentHash };
 }

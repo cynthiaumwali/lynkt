@@ -9,14 +9,14 @@ export interface Document {
 
 export interface CodeLink {
   id: string;
-  documentId: string;
+  document_id: string;
   repo: string;
-  filePath: string;
-  lineStart: number;
-  lineEnd: number;
-  codeHash: string;
-  isStale: boolean;
-  lastChecked: string;
+  file_path: string;
+  line_start: number;
+  line_end: number;
+  code_hash: string;
+  is_stale: boolean;
+  last_checked: string;
 }
 
 export interface CheckCodeResponse {

@@ -15,7 +15,7 @@ export default function CodeLinksSidebar({
   onCheckChanges,
   isChecking
 }: CodeLinksSidebarProps) {
-  const staleCount = codeLinks.filter(link => link.isStale).length;
+  const staleCount = codeLinks.filter(link => link.is_stale).length;
   const upToDateCount = codeLinks.length - staleCount;
 
   const getTimeSince = (dateString: string) => {
@@ -76,40 +76,36 @@ export default function CodeLinksSidebar({
               key={link.id}
               className="p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 hover:shadow-md transition"
             >
-              {/* Status Badge */}
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">{link.isStale ? (
+                <span className="text-lg">{link.is_stale ? (
                   <AlertCircle className="text-yellow-600 dark:text-yellow-400" />
                 ) : (
                   <Check className="text-green-600 dark:text-green-400" />
                 )}</span>
-                <span className={`text-xs font-semibold px-2 py-1 rounded ${link.isStale
+                <span className={`text-xs font-semibold px-2 py-1 rounded ${link.is_stale
                     ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                     : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                   }`}>
-                  {link.isStale ? 'STALE' : 'UP TO DATE'}
+                  {link.is_stale ? 'STALE' : 'UP TO DATE'}
                 </span>
               </div>
 
-              {/* File Info */}
               <p className="text-xs font-mono text-gray-600 dark:text-gray-400 break-all mb-1">
-                {link.filePath}
+                {link.file_path}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-500">
-                Lines {link.lineStart}-{link.lineEnd}
+                Lines {link.line_start}-{link.line_end}
               </p>
 
-              {/* Last Checked */}
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Checked {getTimeSince(link.lastChecked)}
+                  Checked {getTimeSince(link.last_checked)}
                 </span>
               </div>
 
-              {/* Stale Warning */}
-              {link.isStale && (
-                <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded text-xs text-yellow-800 dark:text-yellow-400">
-                  <Lamp className="text-yellow-200" /> Code changed - review needed
+              {link.is_stale && (
+                <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded text-xs text-yellow-800 dark:text-yellow-400 flex gap-2 items-center">
+                  <Lamp className="text-yellow-400 w-4" /> Code changed - review needed
                 </div>
               )}
             </div>
