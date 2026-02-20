@@ -1,8 +1,6 @@
-// app/components/editor/MarkdownEditor.tsx
-
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -17,7 +15,9 @@ export default function MarkdownEditor({
 }: MarkdownEditorProps) {
   const [content, setContent] = useState(initialContent);
   const [showPreview, setShowPreview] = useState(false);
-
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
   const handleChange = (value: string) => {
     setContent(value);
     onContentChange(value);
