@@ -1,5 +1,3 @@
-// app/components/ui/DocumentList.tsx
-
 'use client';
 
 import { Document } from '@/types';

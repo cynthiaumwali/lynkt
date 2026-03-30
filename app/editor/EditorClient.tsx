@@ -131,16 +131,13 @@ export default function EditorClient() {
           className="w-full px-6 py-4 mb-6 text-2xl font-bold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        {/* Editor + Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Editor */}
           <div className="lg:col-span-2">
             <MarkdownEditor
               initialContent={content}
               onContentChange={setContent}
             />
 
-            {/* Helper Text */}
             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 <strong>Tip:</strong> Link to code using syntax:{' '}

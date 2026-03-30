@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     if (id) {
       const doc = await getDocument(id);
-      if (!doc) {
+      if (!doc) { 
         return NextResponse.json(
           { error: 'Document not found' },
           { status: 404 }

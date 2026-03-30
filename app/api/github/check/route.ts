@@ -36,9 +36,9 @@ export async function POST(request: NextRequest) {
 
         return {
           linkId: link.id,
-          filePath: link.filePath,
+          filePath: link.file_path,
           isStale,
-          previousHash: link.codeHash,
+          previousHash: link.code_hash,
           currentHash,
         };
       })
