@@ -12,7 +12,6 @@ export default function EditorClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const docId = searchParams.get('id');
-
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [codeLinks, setCodeLinks] = useState<CodeLink[]>([]);

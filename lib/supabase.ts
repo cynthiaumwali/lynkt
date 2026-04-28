@@ -40,7 +40,7 @@ export async function createDocument(id: string, title: string, content: string)
 }
 
 //update document
-export async function updateDocument(title: string, content: string, id: string): Promise<Document> {
+export async function updateDocument(id: string, title: string, content: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
         .update({ title, content, updated_at: new Date().toISOString()  })
