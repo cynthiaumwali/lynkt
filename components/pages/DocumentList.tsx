@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@/lib/utils';
 import { Document } from '@/types';
 import { Delete } from 'lucide-react';
 import Link from 'next/link';
@@ -50,7 +51,7 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
                 </h2>
               </Link>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Updated {new Date(doc.updatedAt).toLocaleDateString()}
+                Updated {formatDate(doc.updatedAt)}
               </p>
             </div>
             <button

@@ -57,7 +57,7 @@ Example:
 
 Our app uses JWT tokens for authentication.
 
-Implementation: github:myrepo/src/auth.js#L10-20
+Implementation: github:username/reponame/src/auth.js#L10-20
 
 ## How it works
 - User logs in
