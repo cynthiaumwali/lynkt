@@ -142,7 +142,7 @@ export default function EditorClient() {
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 <strong>Tip:</strong> Link to code using syntax:{' '}
                 <code className="px-2 py-1 bg-blue-100 dark:bg-blue-900 rounded font-mono text-xs">
-                  github:repo/file.js#L10-20
+                  github:username/reponame/src/file.js#L10-20
                 </code>
               </p>
             </div>

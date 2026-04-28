@@ -9,9 +9,9 @@ interface MarkdownEditorProps {
   onContentChange: (content: string) => void;
 }
 
-export default function MarkdownEditor({ 
-  initialContent = '', 
-  onContentChange 
+export default function MarkdownEditor({
+  initialContent = '',
+  onContentChange
 }: MarkdownEditorProps) {
   const [content, setContent] = useState(initialContent);
   const [showPreview, setShowPreview] = useState(false);
@@ -50,19 +50,21 @@ export default function MarkdownEditor({
           value={content}
           onChange={(e) => handleChange(e.target.value)}
           className="w-full h-150 p-6 bg-transparent focus:outline-none resize-none font-mono text-sm text-gray-900 dark:text-gray-100"
-          placeholder={`Write your documentation in Markdown...
+          placeholder={
+            `Write your documentation in Markdown...
 
-Example:
-# Authentication System
+                Example:
+                # Authentication System
 
-Our app uses JWT tokens for authentication.
+                Our app uses JWT tokens for authentication.
 
-Implementation: github:username/reponame/src/auth.js#L10-20
+                Implementation: github:username/reponame/src/auth.js#L10-20
 
-## How it works
-- User logs in
-- Server generates JWT
-- Token stored in localStorage`}
+                ## How it works
+                - User logs in
+                - Server generates JWT
+                - Token stored in localStorage`
+          }
         />
       )}
     </div>
