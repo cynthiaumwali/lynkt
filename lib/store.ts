@@ -7,7 +7,7 @@ class DataStore {
   // Documents
   getAllDocuments(): Document[] {
     return Array.from(this.documents.values()).sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     );
   }
 
@@ -15,14 +15,14 @@ class DataStore {
     return this.documents.get(id);
   }
 
-  createDocument(doc: Omit<Document, 'id' | 'createdAt' | 'updatedAt'>): Document {
+  createDocument(doc: Omit<Document, 'id' | 'created_at' | 'updated_at'>): Document {
     const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = new Date().toISOString();
     const newDoc: Document = {
       ...doc,
       id,
-      createdAt: now,
-      updatedAt: now,
+      created_at: now,
+      updated_at: now,
     };
     this.documents.set(id, newDoc);
     return newDoc;
@@ -36,8 +36,8 @@ class DataStore {
       ...doc,
       ...updates,
       id: doc.id,
-      createdAt: doc.createdAt,
-      updatedAt: new Date().toISOString(),
+      created_at: doc.created_at,
+      updated_at: new Date().toISOString(),
     };
     this.documents.set(id, updated);
     return updated;
@@ -50,7 +50,7 @@ class DataStore {
   // Code Links
   getCodeLinksForDocument(documentId: string): CodeLink[] {
     return Array.from(this.codeLinks.values()).filter(
-      link => link.documentId === documentId
+      link => link.document_id === documentId
     );
   }
 
@@ -58,12 +58,12 @@ class DataStore {
     return this.codeLinks.get(id);
   }
 
-  createCodeLink(link: Omit<CodeLink, 'id' | 'lastChecked'>): CodeLink {
+  createCodeLink(link: Omit<CodeLink, 'id' | 'last_checked'>): CodeLink {
     const id = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newLink: CodeLink = {
       ...link,
       id,
-      lastChecked: new Date().toISOString(),
+      last_checked: new Date().toISOString(),
     };
     this.codeLinks.set(id, newLink);
     return newLink;
@@ -76,7 +76,7 @@ class DataStore {
     const updated: CodeLink = {
       ...link,
       ...updates,
-      lastChecked: new Date().toISOString(),
+      last_checked: new Date().toISOString(),
     };
     this.codeLinks.set(id, updated);
     return updated;
@@ -84,7 +84,7 @@ class DataStore {
 
   deleteCodeLinksForDocument(documentId: string): void {
     Array.from(this.codeLinks.entries()).forEach(([id, link]) => {
-      if (link.documentId === documentId) {
+      if (link.document_id === documentId) {
         this.codeLinks.delete(id);
       }
     });
