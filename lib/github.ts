@@ -1,5 +1,3 @@
-//  GitHub integration utilities
-
 import { CodeLink } from '@/types';
 
 export interface ParsedGitHubLink {
