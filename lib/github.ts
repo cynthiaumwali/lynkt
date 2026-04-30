@@ -8,21 +8,18 @@ export interface ParsedGitHubLink {
   rawText: string;
 }
 
-/**
- * Parse GitHub links from markdown content
- * Format: github:repo/path/to/file.js#L10-25
- */
+//parsing github links from document content
 export function parseGitHubLinks(content: string): ParsedGitHubLink[] {
-  const regex = /github:([^\/\s]+)\/([^#\s]+)#L(\d+)-(\d+)/g;
+  const regex = /github:([^\/\s]+)\/([^\/\s]+)\/blob\/[^\/]+\/([^#\s]+)#L(\d+)-(\d+)/g;
   const links: ParsedGitHubLink[] = [];
   
   let match;
   while ((match = regex.exec(content)) !== null) {
     links.push({
-      repo: match[1],
-      filePath: match[2],
-      lineStart: parseInt(match[3]),
-      lineEnd: parseInt(match[4]),
+      repo: ` ${match[1]}/${match[2]}`,
+      filePath: match[3],
+      lineStart: parseInt(match[4]),
+      lineEnd: parseInt(match[5]),
       rawText: match[0],
     });
   }
