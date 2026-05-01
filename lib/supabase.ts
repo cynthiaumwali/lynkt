@@ -83,10 +83,10 @@ export async function getCodeLink(id:string): Promise<CodeLink | null> {
 
 
 //create code link
-export async function createCodeLink(id:string, documentId: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
+export async function createCodeLink(id:string, documentId: string, owner: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
     const {data, error} = await supabase
     .from('code_links')
-    .insert({ id, document_id: documentId, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
+    .insert({ id, document_id: documentId, owner, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
     .select()
     .single();
     if (error) throw error;

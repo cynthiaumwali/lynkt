@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         return await createCodeLink(
           linkId,
           id,
+          parsed.owner,
           parsed.repo,
           parsed.filePath,
           parsed.lineStart,
@@ -124,6 +125,7 @@ export async function PUT(request: NextRequest) {
         return await createCodeLink(
           linkId,
           id,
+          parsed.owner,
           parsed.repo,
           parsed.filePath,
           parsed.lineStart,

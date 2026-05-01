@@ -40,6 +40,7 @@ export async function fetchGitHubCode(
   reponame: string,
   filePath: string
 ): Promise<string> {
+  console.log('Parameters being passed:', { owner, reponame, filePath });
   const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
     owner: owner,
     repo: reponame,
