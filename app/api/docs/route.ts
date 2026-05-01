@@ -61,10 +61,9 @@ export async function POST(request: NextRequest) {
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
         const code = await fetchGitHubCode(
+          parsed.owner,
           parsed.repo,
           parsed.filePath,
-          parsed.lineStart,
-          parsed.lineEnd
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -116,10 +115,9 @@ export async function PUT(request: NextRequest) {
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
         const code = await fetchGitHubCode(
+          parsed.owner,
           parsed.repo,
-          parsed.filePath,
-          parsed.lineStart,
-          parsed.lineEnd
+          parsed.filePath
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
