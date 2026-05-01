@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import EditorClient from "./EditorClient"
+import EditorClient from "../../../components/editor/EditorClient"
 
 export default function EditorPage() {
   return (

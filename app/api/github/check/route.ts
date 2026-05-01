@@ -3,7 +3,7 @@ import {
   getDocument,
   getCodeLinksForDocument,
   updateCodeLink,
-} from '@/lib/supabase';
+} from '@/lib/supabase/queries';
 import { checkCodeChanged } from '@/lib/github';
 
 export async function POST(request: NextRequest) {

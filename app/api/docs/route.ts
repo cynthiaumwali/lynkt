@@ -8,7 +8,7 @@ import {
   getCodeLinksForDocument,
   createCodeLink,
   deleteCodeLinksForDocument,
-} from '@/lib/supabase';
+} from '@/lib/supabase/queries';
 import { parseGitHubLinks, fetchGitHubCode, generateHash } from '@/lib/github';
 
 // GET /api/docs
