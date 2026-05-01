@@ -1,6 +1,8 @@
 import { CodeLink } from '@/types';
+import { Octokit } from "@octokit/core";
 
 export interface ParsedGitHubLink {
+  owner: string;
   repo: string;
   filePath: string;
   lineStart: number;
@@ -8,44 +10,53 @@ export interface ParsedGitHubLink {
   rawText: string;
 }
 
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+})
+
 //parsing github links from document content
 export function parseGitHubLinks(content: string): ParsedGitHubLink[] {
   const regex = /github:([^\/\s]+)\/([^\/\s]+)\/blob\/[^\/]+\/([^#\s]+)#L(\d+)-(\d+)/g;
   const links: ParsedGitHubLink[] = [];
-  
+
   let match;
   while ((match = regex.exec(content)) !== null) {
     links.push({
-      repo: ` ${match[1]}/${match[2]}`,
+      owner: match[1],
+      repo: match[2],
       filePath: match[3],
       lineStart: parseInt(match[4]),
       lineEnd: parseInt(match[5]),
       rawText: match[0],
     });
   }
-  
+
   return links;
 }
 
 // fetch github code
 export async function fetchGitHubCode(
-  repo: string,
-  filePath: string,
-  lineStart: number,
-  lineEnd: number
+  owner: string,
+  reponame: string,
+  filePath: string
 ): Promise<string> {
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
-  const response = await fetch(apiUrl, {
+  const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+    owner: owner,
+    repo: reponame,
+    path: filePath,
     headers: {
-      Authorization: `token ${process.env.GITHUB_TOKEN}`,
-      Accept: 'application/vnd.github.v3.raw',
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch GitHub code: ${response.status} ${response.statusText}`);
+      'X-GitHub-Api-Version': '2026-03-10'
+    }
+  })
+
+  if (response.status !== 200) {
+    throw new Error(`Failed to fetch GitHub code: ${response.status}`);
   }
-  const content = await response.text();
-  return content.split('\n').slice(lineStart - 1, lineEnd).join('\n');
+
+  if ("content" in response.data) {
+    return atob(response.data.content);
+  }
+  throw new Error('Expected a file');
 }
 
 //  generate hash 
@@ -65,14 +76,13 @@ export async function checkCodeChanged(
   link: CodeLink
 ): Promise<{ isStale: boolean; currentHash: string }> {
   const currentCode = await fetchGitHubCode(
+    link.owner,
     link.repo,
-    link.file_path,
-    link.line_start,
-    link.line_end
+    link.file_path
   );
-  
+
   const currentHash = generateHash(currentCode);
   const isStale = currentHash !== link.code_hash;
-  
+
   return { isStale, currentHash };
 }

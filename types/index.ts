@@ -10,6 +10,7 @@ export interface Document {
 export interface CodeLink {
   id: string;
   document_id: string;
+  owner: string;
   repo: string;
   file_path: string;
   line_start: number;
