@@ -1,8 +1,8 @@
 import AuthForm from '@/components/auth/AuthForm'
 import React from 'react'
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
-    <AuthForm formType="login" />
+    <AuthForm formType="signup" />
   )
 }
