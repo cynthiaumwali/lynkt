@@ -9,15 +9,80 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import { BarChart, Code, Eye, EyeOff, User } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Code, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { formSchema } from "@/lib/schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export default function AuthForm() {
+type FormValues = z.infer<typeof formSchema>;
+
+export default function AuthForm({ formType }: { formType: "login" | "signup" }) {
+  const router = useRouter();
+  const authFormSchema = formSchema(formType);
   const [showPassword, setShowPassword] = useState(false);
-import { Code, Eye, EyeOff } from "lucide-react";
+  const [isPending, startTransition] = useTransition();
+  const form = useForm<z.infer<typeof authFormSchema>>({
+    resolver: zodResolver(authFormSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      email: "",
+      password: "",
+      terms: false,
+    },
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    startTransition(async () => {
+
+      if (formType === "signup") {
+        const response = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const { errorMessage } = await response.json();
+        if (errorMessage) {
+          toast.error(errorMessage);
+        } else {
+          router.push("/");
+          toast.success("A verification emaill has been sent to your account. Please check your inbox and click the link to verify your email address.");
+        }
+      } else {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const { errorMessage } = await response.json();
+        if (errorMessage) {
+          toast.error(errorMessage);
+        } else {
+          router.push("/");
+          toast.success("Logged in successfully!");
+        }
+      }
+    });
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-md">
@@ -34,69 +99,141 @@ import { Code, Eye, EyeOff } from "lucide-react";
             </div>
           </CardHeader>
           <CardContent className="space-y-6 px-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First name</Label>
-                <Input id="firstName" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last name</Label>
-                <Input id="lastName" />
-              </div>
-            </div>
+                {formType === "signup" && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First name</FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isPending} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last name</FormLabel>
+                          <FormControl>
+                            <Input {...field} disabled={isPending} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
 
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input id="email" type="email" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  className="pr-10"
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled={isPending} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email address</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" disabled={isPending} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type={showPassword ? "text" : "password"}
+                            className="pr-10"
+                            disabled={isPending}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="terms"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormLabel className="text-sm text-muted-foreground font-normal">
+                        I agree to the{" "}
+                        <Link href="#" className="text-primary hover:underline">
+                          Terms
+                        </Link>{" "}
+                        and{" "}
+                        <Link href="#" className="text-primary hover:underline">
+                          Conditions
+                        </Link>
+                      </FormLabel>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button type="submit" className="w-full bg-primary text-primary-foreground" disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    "Create free account"
                   )}
                 </Button>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terms" />
-              <label htmlFor="terms" className="text-sm text-muted-foreground">
-                I agree to the{" "}
-                <Link href="#" className="text-primary hover:underline">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link href="#" className="text-primary hover:underline">
-                  Conditions
-                </Link>
-              </label>
-            </div>
-
-            <Button className="w-full bg-primary text-primary-foreground">
-              Create free account
-            </Button>
+              </form>
+            </Form>
           </CardContent>
           <CardFooter className="flex justify-center border-t !py-4">
             <p className="text-center text-sm text-muted-foreground">
