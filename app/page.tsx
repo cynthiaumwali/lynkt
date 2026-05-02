@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Document } from '@/types';
 import DocumentList from '../components/documents/DocumentList';
+import Profile from '@/components/auth/Profile';
 
 export default function HomePage() {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -37,27 +37,22 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <div className="border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="px-6 md:px-8 lg:px-12 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">
-                Linkt
+              <h1 className="text-2xl font-bold">
+                Lynkt
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Documentation that stays in sync with code
               </p>
             </div>
-            <Link
-              href="/editor"
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition text-sm"
-            >
-              + Add New Document
-            </Link>   
+            <Profile />
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-border border-t-blue-600"></div>
