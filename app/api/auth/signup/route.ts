@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const { firstName, lastName, username, email, password } = await request.json();
-        if (!firstName || !lastName || !username || !email || !password) {
+        const { firstName, lastName,  email, password } = await request.json();
+        if (!firstName || !lastName || !email || !password) {
             return NextResponse.json({ errorMessage: 'All fields are required' }, { status: 400 });
         }
         const supabase = await createSupabaseClient();
@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
                 data: {
                     first_name: firstName,
                     last_name: lastName,
-                    username,
                 }
             }
          });
