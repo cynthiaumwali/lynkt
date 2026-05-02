@@ -20,33 +20,38 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
   if (documents.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           No documents yet
-        </p>
+        </h2>
         <p className="text-gray-500 dark:text-gray-500 text-sm mb-6">
           Create your first documentation to get started
         </p>
-        <Link
-          href="/editor"
-          className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-        >
-          + Create Document
-        </Link>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Your Documents
+        </h2>
+        <Link
+          href="/editor"
+          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+        >
+          + Create Document
+        </Link>
+      </div>
       {documents.map((doc) => (
         <div
           key={doc.id}
-          className="rounded-lg p-6 border border-border transition hover:scale-[1.03]"
+          className="rounded-lg p-4 border border-border transition hover:scale-[1.03]"
         >
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <Link href={`/editor?id=${doc.id}`}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white cursor-pointer">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white cursor-pointer">
                   {doc.title}
                 </h2>
               </Link>

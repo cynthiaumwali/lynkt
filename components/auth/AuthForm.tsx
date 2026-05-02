@@ -39,7 +39,6 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
     defaultValues: {
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       password: "",
       terms: false,
@@ -132,20 +131,6 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                     />
                   </div>
                 )}
-
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input {...field} disabled={isPending} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <FormField
                   control={form.control}
