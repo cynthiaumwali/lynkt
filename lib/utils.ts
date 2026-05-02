@@ -14,3 +14,12 @@ export const formatDate = (timestamp: string) => {
     minute: '2-digit',
   })
 }
+
+export const getErrorMessage = (error: unknown, defaultMessage: string = "An unknown error occurred."): string => {
+  console.log("Error:", error);
+  let errorMessage = defaultMessage;
+  if (error instanceof Error && error.message.length < 100) {
+    errorMessage = error.message;
+  }
+  return errorMessage;
+}
