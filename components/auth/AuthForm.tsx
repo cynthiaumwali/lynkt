@@ -90,10 +90,10 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
             <Code className="w-6 h-6" />
             <div className="space-y-0.5 flex flex-col items-center">
               <h2 className="text-2xl font-semibold text-foreground">
-                Create an account
+               {formType === "signup" ? "Create an account" : "Welcome back"}
               </h2>
               <p className="text-muted-foreground">
-                Welcome! Create an account to get started.
+                {formType === "signup" ? "Welcome! Create an account to get started." : "Please enter your details to log in."}
               </p>
             </div>
           </CardHeader>
@@ -223,8 +223,8 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
           <CardFooter className="flex justify-center border-t !py-4">
             <p className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="#" className="text-primary hover:underline">
-                Sign in
+              <Link href={formType === "signup" ? "/login" : "/signup"} className="text-primary hover:underline">
+                {formType === "signup" ? "Login" : "Sign up"}
               </Link>
             </p>
           </CardFooter>
