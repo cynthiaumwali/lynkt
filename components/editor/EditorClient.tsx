@@ -7,6 +7,8 @@ import CodeLinksSidebar from '@/components/editor/CodeLinksSidebar';
 import MarkdownEditor from '@/components/editor/MarkdownEditor';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import * as Sentry from '@sentry/nextjs';
+
 
 export default function EditorClient() {
   const router = useRouter();
@@ -32,6 +34,10 @@ export default function EditorClient() {
       setContent(doc.content);
       setCodeLinks(doc.codeLinks || []);
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: {section: "editor", feature: "fetch-document"},
+        extra: {documentId: id}
+      });
       console.error('Error fetching document:', error);
     }
   };
@@ -67,6 +73,10 @@ export default function EditorClient() {
         }
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: {section: "editor", feature: "save-document"},
+        extra: {documentId: docId}
+      });
       console.error('Error saving document:', error);
       toast.error('Error saving document');
     } finally {
@@ -97,6 +107,10 @@ export default function EditorClient() {
         toast.success(`Checked ${result.totalLinks} files. ${result.staleLinks} are stale.`);
       }
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: {section: "editor", feature: "check-changes"},
+        extra: {documentId: docId}
+      });
       console.error('Error checking changes:', error);
       toast.error('Error checking for changes');
     } finally {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Document } from '@/types';
 import DocumentList from '../components/documents/DocumentList';
 import Profile from '@/components/auth/Profile';
+import * as Sentry from '@sentry/nextjs';
 
 export default function HomePage() {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -19,6 +20,9 @@ export default function HomePage() {
       const data = await res.json();
       setDocuments(data);
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: {section: "dashboard", feature: "fetch-documents"},
+      });
       console.error('Error fetching documents:', error);
     } finally {
       setLoading(false);
@@ -30,6 +34,10 @@ export default function HomePage() {
       await fetch(`/api/docs?id=${id}`, { method: 'DELETE' });
       fetchDocuments();
     } catch (error) {
+      Sentry.captureException(error, {
+        tags: {section: "dashboard", feature: "delete-document"},
+        extra: {documentId: id}
+      });
       console.error('Error deleting document:', error);
     } 
   };
