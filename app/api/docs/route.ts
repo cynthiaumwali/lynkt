@@ -10,27 +10,29 @@ import {
   deleteCodeLinksForDocument,
 } from '@/lib/supabase/queries';
 import { parseGitHubLinks, fetchGitHubCode, generateHash } from '@/lib/github';
+import { createSupabaseClient } from '@/lib/supabase/server';
 
 // GET /api/docs
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (id) {
-      const doc = await getDocument(id);
-      if (!doc) { 
+      const doc = await getDocument(await supabase, id);
+      if (!doc) {
         return NextResponse.json(
           { error: 'Document not found' },
           { status: 404 }
         );
       }
 
-      const codeLinks = await getCodeLinksForDocument(id);
+      const codeLinks = await getCodeLinksForDocument(await supabase, id);
       return NextResponse.json({ ...doc, codeLinks });
     }
 
-    const docs = await getAllDocuments();
+    const docs = await getAllDocuments(await supabase);
     return NextResponse.json(docs);
   } catch (error) {
     console.error('GET /api/docs error:', error);
@@ -44,6 +46,7 @@ export async function GET(request: NextRequest) {
 // POST /api/docs
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
     const body = await request.json();
     const { title, content } = body;
 
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const doc = await createDocument(id, title.trim(), content || '');
+    const doc = await createDocument(await supabase, id, title.trim(), content || '');
 
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
@@ -67,20 +70,12 @@ export async function POST(request: NextRequest) {
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        return await createCodeLink(
-          linkId,
-          id,
-          parsed.owner,
-          parsed.repo,
-          parsed.filePath,
-          parsed.lineStart,
-          parsed.lineEnd,
-          generateHash(code)
-        );
+        return await createCodeLink(await supabase, linkId, id, parsed.owner, parsed.repo, parsed.filePath, parsed.lineStart, parsed.lineEnd, generateHash(code));
       })
     );
 
     return NextResponse.json({ ...doc, codeLinks }, { status: 201 });
+
   } catch (error) {
     console.error('POST /api/docs error:', error);
     return NextResponse.json(
@@ -93,6 +88,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/docs
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
     const body = await request.json();
     const { id, title, content } = body;
 
@@ -103,7 +99,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const doc = await updateDocument(id, title, content);
+    const doc = await updateDocument(await supabase, id, title, content);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -111,7 +107,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await deleteCodeLinksForDocument(id);
+    await deleteCodeLinksForDocument(await supabase, id);
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
@@ -123,6 +119,7 @@ export async function PUT(request: NextRequest) {
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         return await createCodeLink(
+          await supabase,
           linkId,
           id,
           parsed.owner,
@@ -158,8 +155,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await deleteCodeLinksForDocument(id);
-    await deleteDocument(id);
+    const supabase = createSupabaseClient();
+    await deleteCodeLinksForDocument(await supabase, id);
+    await deleteDocument(await supabase, id);
 
     return NextResponse.json({ success: true });
   } catch (error) {

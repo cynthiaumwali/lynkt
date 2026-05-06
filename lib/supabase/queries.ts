@@ -1,13 +1,13 @@
 import { CodeLink } from '@/types';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 //fetch documents
-export async function getAllDocuments(): Promise<Document[]> {
+export async function getAllDocuments(supabase: SupabaseClient): Promise<Document[]> {
     const { data, error } = await supabase
         .from('documents')
         .select('*')
@@ -18,7 +18,7 @@ export async function getAllDocuments(): Promise<Document[]> {
 }
 
 //fetch single document by id
-export async function getDocument(id: string): Promise<Document | null> {
+export async function getDocument(supabase: SupabaseClient, id: string): Promise<Document | null> {
     const { data, error } = await supabase
         .from('documents')
         .select('*')
@@ -29,7 +29,7 @@ export async function getDocument(id: string): Promise<Document | null> {
 }
 
 //create document
-export async function createDocument(id: string, title: string, content: string): Promise<Document> {
+export async function createDocument(supabase: SupabaseClient, id: string, title: string, content: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
         .insert({ id, title, content })
@@ -40,7 +40,7 @@ export async function createDocument(id: string, title: string, content: string)
 }
 
 //update document
-export async function updateDocument(id: string, title: string, content: string): Promise<Document> {
+export async function updateDocument(supabase: SupabaseClient, id: string, title: string, content: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
         .update({ title, content, updated_at: new Date().toISOString()  })
@@ -52,7 +52,7 @@ export async function updateDocument(id: string, title: string, content: string)
 }
 
 //delete document
-export async function deleteDocument(id: string): Promise<void> {
+export async function deleteDocument(supabase: SupabaseClient, id: string): Promise<void> {
     const { error } = await supabase
         .from('documents')
         .delete()
@@ -61,7 +61,7 @@ export async function deleteDocument(id: string): Promise<void> {
 }
 
 //get all code links
-export async function getCodeLinksForDocument(documentId: string): Promise<CodeLink[]> {
+export async function getCodeLinksForDocument(supabase: SupabaseClient, documentId: string): Promise<CodeLink[]> {
     const { data, error } = await supabase
         .from('code_links')
         .select('*')
@@ -71,7 +71,7 @@ export async function getCodeLinksForDocument(documentId: string): Promise<CodeL
 }
 
 //get single code link by id
-export async function getCodeLink(id:string): Promise<CodeLink | null> {
+export async function getCodeLink(supabase: SupabaseClient, id:string): Promise<CodeLink | null> {
     const {data, error} = await supabase
     .from('code_links')
     .select('*')
@@ -83,7 +83,7 @@ export async function getCodeLink(id:string): Promise<CodeLink | null> {
 
 
 //create code link
-export async function createCodeLink(id:string, documentId: string, owner: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
+export async function createCodeLink(supabase: SupabaseClient, id:string, documentId: string, owner: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
     const {data, error} = await supabase
     .from('code_links')
     .insert({ id, document_id: documentId, owner, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
@@ -94,7 +94,7 @@ export async function createCodeLink(id:string, documentId: string, owner: strin
 }
 
 //delete code link
-export async function deleteCodeLinksForDocument(documentId: string): Promise<void> {
+export async function deleteCodeLinksForDocument(supabase: SupabaseClient, documentId: string): Promise<void> {
   const { error } = await supabase
     .from('code_links')
     .delete()
@@ -104,7 +104,7 @@ export async function deleteCodeLinksForDocument(documentId: string): Promise<vo
 }
 
 //update code link
-export async function updateCodeLink(id: string, isStale: boolean, codeHash: string): Promise<CodeLink> {
+export async function updateCodeLink(supabase: SupabaseClient, id: string, isStale: boolean, codeHash: string): Promise<CodeLink> {
     const { data, error } = await supabase
         .from('code_links')
         .update({ is_stale: isStale, code_hash: codeHash, last_checked: new Date().toISOString() })

@@ -5,11 +5,14 @@ import {
   updateCodeLink,
 } from '@/lib/supabase/queries';
 import { checkCodeChanged } from '@/lib/github';
+import { createSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { documentId } = body;
+
+    const supabase = createSupabaseClient();
 
     if (!documentId) {
       return NextResponse.json(
@@ -18,7 +21,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const doc = await getDocument(documentId);
+    const doc = await getDocument(await supabase, documentId);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -26,13 +29,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const codeLinks = await getCodeLinksForDocument(documentId);
+    const codeLinks = await getCodeLinksForDocument(await supabase, documentId);
 
     const results = await Promise.all(
       codeLinks.map(async (link) => {
         const { isStale, currentHash } = await checkCodeChanged(link);
 
-        await updateCodeLink(link.id, isStale, currentHash);
+        await updateCodeLink(await supabase, link.id, isStale, currentHash);
 
         return {
           linkId: link.id,
