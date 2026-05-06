@@ -26,6 +26,7 @@ import { z } from "zod";
 import { formSchema } from "@/lib/schema";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import SignInWithGithub from "./SignInWithGithub";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -100,7 +101,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
           <CardContent className="space-y-6 px-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
+                <SignInWithGithub />
                 {formType === "signup" && (
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
