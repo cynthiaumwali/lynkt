@@ -29,13 +29,6 @@ export async function createSupabaseClient() {
 export async function getUser(){
     const { auth } = await createSupabaseClient();
     const { data: { user } } = await auth.getUser();
-    return user;
-}
-
-export async function protectedRoute() {
-    const user = await getUser();
-    if (!user) {
-        throw new Error('Unauthorized');
-    }
+    if (!user) throw new Error('Unauthorized');
     return user;
 }

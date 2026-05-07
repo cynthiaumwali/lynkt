@@ -8,9 +8,10 @@ import {
   getCodeLinksForDocument,
   createCodeLink,
   deleteCodeLinksForDocument,
+  getGithubToken,
 } from '@/lib/supabase/queries';
 import { parseGitHubLinks, fetchGitHubCode, generateHash } from '@/lib/github';
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { createSupabaseClient, getUser } from '@/lib/supabase/server';
 
 // GET /api/docs
 export async function GET(request: NextRequest) {
@@ -47,6 +48,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createSupabaseClient();
+    const user = await getUser();
+    const token = await getGithubToken(await supabase, user.id);
     const body = await request.json();
     const { title, content } = body;
 
@@ -67,6 +70,7 @@ export async function POST(request: NextRequest) {
           parsed.owner,
           parsed.repo,
           parsed.filePath,
+          token || ''
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -89,6 +93,8 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = createSupabaseClient();
+    const user = await getUser();
+    const token = await getGithubToken(await supabase, user.id);
     const body = await request.json();
     const { id, title, content } = body;
 
@@ -114,7 +120,8 @@ export async function PUT(request: NextRequest) {
         const code = await fetchGitHubCode(
           parsed.owner,
           parsed.repo,
-          parsed.filePath
+          parsed.filePath,
+          token || ''
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

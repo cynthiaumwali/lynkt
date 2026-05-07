@@ -10,10 +10,6 @@ export interface ParsedGitHubLink {
   rawText: string;
 }
 
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
-})
-
 //parsing github links from document content
 export function parseGitHubLinks(content: string): ParsedGitHubLink[] {
   const regex = /github:([^\/\s]+)\/([^\/\s]+)\/blob\/[^\/]+\/([^#\s]+)#L(\d+)-(\d+)/g;
@@ -38,9 +34,10 @@ export function parseGitHubLinks(content: string): ParsedGitHubLink[] {
 export async function fetchGitHubCode(
   owner: string,
   reponame: string,
-  filePath: string
+  filePath: string,
+  token: string
 ): Promise<string> {
-  console.log('Parameters being passed:', { owner, reponame, filePath });
+  const octokit = new Octokit(token ? { auth: token } : {});
   const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
     owner: owner,
     repo: reponame,
@@ -74,12 +71,14 @@ export function generateHash(content: string): string {
 
 //chack for code changes
 export async function checkCodeChanged(
-  link: CodeLink
+  link: CodeLink,
+  token: string
 ): Promise<{ isStale: boolean; currentHash: string }> {
   const currentCode = await fetchGitHubCode(
     link.owner,
     link.repo,
-    link.file_path
+    link.file_path,
+    token
   );
 
   const currentHash = generateHash(currentCode);

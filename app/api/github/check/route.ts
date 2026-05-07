@@ -3,9 +3,10 @@ import {
   getDocument,
   getCodeLinksForDocument,
   updateCodeLink,
+  getGithubToken,
 } from '@/lib/supabase/queries';
 import { checkCodeChanged } from '@/lib/github';
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { createSupabaseClient, getUser } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,8 @@ export async function POST(request: NextRequest) {
     const { documentId } = body;
 
     const supabase = createSupabaseClient();
+    const user = await getUser();
+    const token = await getGithubToken(await supabase, user.id);
 
     if (!documentId) {
       return NextResponse.json(
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     const results = await Promise.all(
       codeLinks.map(async (link) => {
-        const { isStale, currentHash } = await checkCodeChanged(link);
+        const { isStale, currentHash } = await checkCodeChanged(link, token || '');
 
         await updateCodeLink(await supabase, link.id, isStale, currentHash);
 

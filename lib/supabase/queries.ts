@@ -43,7 +43,7 @@ export async function createDocument(supabase: SupabaseClient, id: string, title
 export async function updateDocument(supabase: SupabaseClient, id: string, title: string, content: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
-        .update({ title, content, updated_at: new Date().toISOString()  })
+        .update({ title, content, updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single();
@@ -71,36 +71,36 @@ export async function getCodeLinksForDocument(supabase: SupabaseClient, document
 }
 
 //get single code link by id
-export async function getCodeLink(supabase: SupabaseClient, id:string): Promise<CodeLink | null> {
-    const {data, error} = await supabase
-    .from('code_links')
-    .select('*')
-    .eq('id', id)
-    .single();
+export async function getCodeLink(supabase: SupabaseClient, id: string): Promise<CodeLink | null> {
+    const { data, error } = await supabase
+        .from('code_links')
+        .select('*')
+        .eq('id', id)
+        .single();
     if (error) throw error;
     return data as CodeLink;
 }
 
 
 //create code link
-export async function createCodeLink(supabase: SupabaseClient, id:string, documentId: string, owner: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
-    const {data, error} = await supabase
-    .from('code_links')
-    .insert({ id, document_id: documentId, owner, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
-    .select()
-    .single();
+export async function createCodeLink(supabase: SupabaseClient, id: string, documentId: string, owner: string, repo: string, filePath: string, lineStart: number, lineEnd: number, codeHash: string): Promise<CodeLink> {
+    const { data, error } = await supabase
+        .from('code_links')
+        .insert({ id, document_id: documentId, owner, repo, file_path: filePath, line_start: lineStart, line_end: lineEnd, code_hash: codeHash, is_stale: false })
+        .select()
+        .single();
     if (error) throw error;
     return data as CodeLink;
 }
 
 //delete code link
 export async function deleteCodeLinksForDocument(supabase: SupabaseClient, documentId: string): Promise<void> {
-  const { error } = await supabase
-    .from('code_links')
-    .delete()
-    .eq('document_id', documentId);
+    const { error } = await supabase
+        .from('code_links')
+        .delete()
+        .eq('document_id', documentId);
 
-  if (error) throw error;
+    if (error) throw error;
 }
 
 //update code link
@@ -113,4 +113,14 @@ export async function updateCodeLink(supabase: SupabaseClient, id: string, isSta
         .single();
     if (error) throw error;
     return data as CodeLink;
+}
+
+//get token
+export async function getGithubToken(supabase: SupabaseClient, user_id: string): Promise<string | null> {
+    const { data, error } = await supabase.from('github_tokens')
+        .select('token')
+        .eq('user_id', user_id)
+        .single();
+    if (error) throw error;
+    return data ? data.token : null;
 }
