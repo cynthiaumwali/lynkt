@@ -10,7 +10,7 @@ export default function SignInWithGithub() {
             provider: 'github',
             options: {
                 scopes: 'repo',
-                redirectTo: `${window.location.origin}/auth/callback`
+                redirectTo: `${window.location.origin}/api/auth/callback`
             }
         });
     }
@@ -18,7 +18,7 @@ export default function SignInWithGithub() {
         <Button
             onClick={handleSignIn}
             variant="outline"
-            className="w-full"
+            className="w-full cursor-pointer"
         >
             <Github className="w-4 h-4 mr-2" />
             Continue with GitHub
