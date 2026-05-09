@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
 
 export async function GET(request: NextRequest) {
+    const { origin } = new URL(request.url)
     try {
         const { searchParams, origin } = new URL(request.url)
         const code = searchParams.get('code')
@@ -27,6 +28,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(`${origin}/`)
     } catch (error) {
         Sentry.captureException(error)
-        return NextResponse.redirect(`${origin}/login?error=oauth_failed`)
+        return NextResponse.redirect(`${origin}/auth/success`)
     }
 }

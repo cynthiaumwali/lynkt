@@ -16,12 +16,12 @@ import { createSupabaseClient, getUser } from '@/lib/supabase/server';
 // GET /api/docs
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createSupabaseClient();
+    const supabase = await createSupabaseClient();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (id) {
-      const doc = await getDocument(await supabase, id);
+      const doc = await getDocument(supabase, id);
       if (!doc) {
         return NextResponse.json(
           { error: 'Document not found' },
@@ -29,11 +29,11 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const codeLinks = await getCodeLinksForDocument(await supabase, id);
+      const codeLinks = await getCodeLinksForDocument(supabase, id);
       return NextResponse.json({ ...doc, codeLinks });
     }
 
-    const docs = await getAllDocuments(await supabase);
+    const docs = await getAllDocuments(supabase);
     return NextResponse.json(docs);
   } catch (error) {
     console.error('GET /api/docs error:', error);
@@ -47,9 +47,9 @@ export async function GET(request: NextRequest) {
 // POST /api/docs
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createSupabaseClient();
-    const user = await getUser();
-    const token = await getGithubToken(await supabase, user.id);
+    const supabase = await createSupabaseClient();
+    const user = await getUser(supabase);
+    const token = await getGithubToken(supabase, user.id);
     const body = await request.json();
     const { title, content } = body;
 
@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
     }
 
     const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const doc = await createDocument(await supabase, id, title.trim(), content || '');
+
+    const doc = await createDocument(supabase, id, title.trim(), content || '', user.id);
 
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
         );
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        return await createCodeLink(await supabase, linkId, id, parsed.owner, parsed.repo, parsed.filePath, parsed.lineStart, parsed.lineEnd, generateHash(code));
+        return await createCodeLink(supabase, linkId, id, parsed.owner, parsed.repo, parsed.filePath, parsed.lineStart, parsed.lineEnd, generateHash(code));
       })
     );
 
@@ -92,9 +93,9 @@ export async function POST(request: NextRequest) {
 // PUT /api/docs
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createSupabaseClient();
-    const user = await getUser();
-    const token = await getGithubToken(await supabase, user.id);
+    const supabase = await createSupabaseClient();
+    const user = await getUser(supabase);
+    const token = await getGithubToken(supabase, user.id);
     const body = await request.json();
     const { id, title, content } = body;
 
@@ -105,7 +106,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const doc = await updateDocument(await supabase, id, title, content);
+    const doc = await updateDocument(supabase, id, title, content, user.id);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -113,7 +114,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await deleteCodeLinksForDocument(await supabase, id);
+    await deleteCodeLinksForDocument(supabase, id);
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
@@ -126,7 +127,7 @@ export async function PUT(request: NextRequest) {
 
         const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         return await createCodeLink(
-          await supabase,
+          supabase,
           linkId,
           id,
           parsed.owner,
@@ -162,9 +163,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseClient();
-    await deleteCodeLinksForDocument(await supabase, id);
-    await deleteDocument(await supabase, id);
+    const supabase = await createSupabaseClient();
+    await deleteCodeLinksForDocument(supabase, id);
+    await deleteDocument(supabase, id);
 
     return NextResponse.json({ success: true });
   } catch (error) {

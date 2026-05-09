@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { documentId } = body;
 
-    const supabase = createSupabaseClient();
-    const user = await getUser();
-    const token = await getGithubToken(await supabase, user.id);
+    const supabase = await createSupabaseClient();
+    const user = await getUser(supabase);
+    const token = await getGithubToken(supabase, user.id);
 
     if (!documentId) {
       return NextResponse.json(
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const doc = await getDocument(await supabase, documentId);
+    const doc = await getDocument(supabase, documentId);
     if (!doc) {
       return NextResponse.json(
         { error: 'Document not found' },
@@ -32,13 +32,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const codeLinks = await getCodeLinksForDocument(await supabase, documentId);
+    const codeLinks = await getCodeLinksForDocument(supabase, documentId);
 
     const results = await Promise.all(
       codeLinks.map(async (link) => {
         const { isStale, currentHash } = await checkCodeChanged(link, token || '');
 
-        await updateCodeLink(await supabase, link.id, isStale, currentHash);
+        await updateCodeLink(supabase, link.id, isStale, currentHash);
 
         return {
           linkId: link.id,
