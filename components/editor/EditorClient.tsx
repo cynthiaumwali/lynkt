@@ -38,7 +38,7 @@ export default function EditorClient() {
         tags: {section: "editor", feature: "fetch-document"},
         extra: {documentId: id}
       });
-      console.error('Error fetching document:', error);
+      toast.error('Error fetching document');
     }
   };
 
@@ -77,7 +77,6 @@ export default function EditorClient() {
         tags: {section: "editor", feature: "save-document"},
         extra: {documentId: docId}
       });
-      console.error('Error saving document:', error);
       toast.error('Error saving document');
     } finally {
       setSaving(false);
@@ -111,7 +110,6 @@ export default function EditorClient() {
         tags: {section: "editor", feature: "check-changes"},
         extra: {documentId: docId}
       });
-      console.error('Error checking changes:', error);
       toast.error('Error checking for changes');
     } finally {
       setChecking(false);
@@ -127,7 +125,7 @@ export default function EditorClient() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer"
             >
               {saving ? 'Saving...' : 'Save'}
             </button>

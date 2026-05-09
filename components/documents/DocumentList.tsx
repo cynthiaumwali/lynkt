@@ -2,8 +2,9 @@
 
 import { formatDate } from '@/lib/utils';
 import { Document } from '@/types';
-import { Delete } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '../ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 interface DocumentListProps {
   documents: Document[];
@@ -11,11 +12,6 @@ interface DocumentListProps {
 }
 
 export default function DocumentList({ documents, onDelete }: DocumentListProps) {
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`Delete "${title}"?`)) {
-      onDelete(id);
-    }
-  };
 
   if (documents.length === 0) {
     return (
@@ -59,12 +55,26 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
                 Updated {formatDate(doc.updated_at)}
               </p>
             </div>
-            <button
-              onClick={() => handleDelete(doc.id, doc.title)}
-              className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
-            >
-              <Delete className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" />
-            </button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 cursor-pointer hover:bg-background">
+                  Delete
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete the document.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => onDelete(doc.id)} className="bg-red-600 text-white hover:bg-red-700">
+                    Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       ))}
