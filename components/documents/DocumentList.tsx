@@ -22,6 +22,12 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
         <p className="text-gray-500 dark:text-gray-500 text-sm mb-6">
           Create your first documentation to get started
         </p>
+        <Link
+          href="/editor"
+          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-medium"
+        >
+          + Create Document
+        </Link>
       </div>
     );
   }
@@ -34,7 +40,7 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
         </h2>
         <Link
           href="/editor"
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-medium"
         >
           + Create Document
         </Link>

@@ -2,6 +2,8 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { Github } from 'lucide-react';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function SignInWithGithub() {
     const supabase = createSupabaseClient();

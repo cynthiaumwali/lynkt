@@ -19,7 +19,6 @@ import Image from "next/image";
 export default function Profile() {
     const [isPending, startTransition] = useTransition();
     const [user, setUser] = useState<User | null>(null);
-    const router = useRouter();
     const supabase = createSupabaseClient();
 
     useEffect(() => {
@@ -47,8 +46,7 @@ export default function Profile() {
                 toast.error(errorMessage);
             } else {
                 toast.success("Logged out successfully");
-                router.refresh();
-                router.push("/login");
+                window.location.href = "/login";
             }
         });
     };
