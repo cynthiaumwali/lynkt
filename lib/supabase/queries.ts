@@ -1,11 +1,6 @@
 import { CodeLink } from '@/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-// export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 //fetch documents
 export async function getAllDocuments(supabase: SupabaseClient): Promise<Document[]> {
     const { data, error } = await supabase
@@ -29,22 +24,24 @@ export async function getDocument(supabase: SupabaseClient, id: string): Promise
 }
 
 //create document
-export async function createDocument(supabase: SupabaseClient, id: string, title: string, content: string): Promise<Document> {
+export async function createDocument(supabase: SupabaseClient, id: string, title: string, content: string, userId: string): Promise<Document> {
+    console.log('Creating document with:', { id, title, userId })
     const { data, error } = await supabase
         .from('documents')
-        .insert({ id, title, content })
+        .insert({ id, title, content, user_id: userId })
         .select()
-        .single();
+        .single()
     if (error) throw error;
     return data as Document;
 }
 
 //update document
-export async function updateDocument(supabase: SupabaseClient, id: string, title: string, content: string): Promise<Document> {
+export async function updateDocument(supabase: SupabaseClient, id: string, title: string, content: string, userId: string): Promise<Document> {
     const { data, error } = await supabase
         .from('documents')
         .update({ title, content, updated_at: new Date().toISOString() })
         .eq('id', id)
+        .eq('user_id', userId)
         .select()
         .single();
     if (error) throw error;

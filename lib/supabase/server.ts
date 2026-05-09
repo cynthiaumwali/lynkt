@@ -26,9 +26,8 @@ export async function createSupabaseClient() {
   )
 }
 
-export async function getUser(){
-    const { auth } = await createSupabaseClient();
-    const { data: { user } } = await auth.getUser();
-    if (!user) throw new Error('Unauthorized');
-    return user;
+export async function getUser(supabase: Awaited<ReturnType<typeof createSupabaseClient>>) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  return user
 }
