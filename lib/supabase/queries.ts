@@ -118,9 +118,9 @@ export async function updateCodeLink(supabase: SupabaseClient, id: string, isSta
 //get token
 export async function getGithubToken(supabase: SupabaseClient, user_id: string): Promise<string | null> {
     const { data, error } = await supabase.from('github_tokens')
-        .select('token')
+        .select('tokens')
         .eq('user_id', user_id)
         .single();
     if (error) throw error;
-    return data ? data.token : null;
+    return data ? data.tokens : null;
 }

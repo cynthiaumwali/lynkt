@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
             const { error: tokenError } = await supabase.from('github_tokens').upsert({
                 user_id: user.id,
-                token: githubToken
+                tokens: githubToken
             })
             if (tokenError) throw tokenError
         }
