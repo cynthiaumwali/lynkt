@@ -10,12 +10,17 @@ import { createSupabaseClient, getUser } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
+    const fallbackToken = process.env.GITHUB_TOKEN!;
     const body = await request.json();
     const { documentId } = body;
 
     const supabase = await createSupabaseClient();
     const user = await getUser(supabase);
-    const token = await getGithubToken(supabase, user.id);
+    let token = await getGithubToken(supabase, user.id);
+
+    if (!token) {
+        token = fallbackToken;
+    }
 
     if (!documentId) {
       return NextResponse.json(
@@ -33,15 +38,15 @@ export async function POST(request: NextRequest) {
     }
 
     const codeLinks = await getCodeLinksForDocument(supabase, documentId);
-
+    
     const results = await Promise.all(
       codeLinks.map(async (link) => {
         const { isStale, currentHash } = await checkCodeChanged(link, token || '');
 
         await updateCodeLink(supabase, link.id, isStale, currentHash);
 
+        //Claude AI doc Updates - 
         return {
-          linkId: link.id,
           filePath: link.file_path,
           isStale,
           previousHash: link.code_hash,
