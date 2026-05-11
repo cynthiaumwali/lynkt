@@ -25,7 +25,6 @@ export async function getDocument(supabase: SupabaseClient, id: string): Promise
 
 //create document
 export async function createDocument(supabase: SupabaseClient, id: string, title: string, content: string, userId: string): Promise<Document> {
-    console.log('Creating document with:', { id, title, userId })
     const { data, error } = await supabase
         .from('documents')
         .insert({ id, title, content, user_id: userId })
@@ -118,6 +117,7 @@ export async function getGithubToken(supabase: SupabaseClient, user_id: string):
         .select('tokens')
         .eq('user_id', user_id)
         .single();
-    if (error) throw error;
+
+    if (error) return null;
     return data ? data.tokens : null;
 }

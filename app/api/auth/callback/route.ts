@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         if (data.session) {
             const user = data.session.user
             const githubToken = data.session.provider_token
-
+            
             const { error: tokenError } = await supabase.from('github_tokens').upsert({
                 user_id: user.id,
                 tokens: githubToken

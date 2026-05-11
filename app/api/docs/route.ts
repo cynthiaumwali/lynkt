@@ -61,9 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
     const doc = await createDocument(supabase, id, title.trim(), content || '', user.id);
-
     const parsedLinks = parseGitHubLinks(content || '');
     const codeLinks = await Promise.all(
       parsedLinks.map(async (parsed) => {
