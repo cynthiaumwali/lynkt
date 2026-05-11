@@ -88,7 +88,6 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
       <div className="w-full max-w-md">
         <Card className="border-none shadow-lg pb-0">
           <CardHeader className="flex flex-col items-center space-y-1.5 pb-4 pt-6">
-            <Code className="w-6 h-6" />
             <div className="space-y-0.5 flex flex-col items-center">
               <h2 className="text-2xl font-semibold text-foreground">
                {formType === "signup" ? "Create an account" : "Welcome back"}

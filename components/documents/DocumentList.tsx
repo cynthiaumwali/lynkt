@@ -13,6 +13,10 @@ interface DocumentListProps {
 
 export default function DocumentList({ documents, onDelete }: DocumentListProps) {
 
+  const handleDelete = (id: string) => {
+    onDelete(id);
+  }
+
   if (documents.length === 0) {
     return (
       <div className="text-center py-16">
@@ -75,7 +79,7 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => onDelete(doc.id)} className="bg-red-600 text-white hover:bg-red-700">
+                  <Button variant="outline" onClick={() => handleDelete(doc.id)} className="bg-red-600 text-white hover:bg-red-700 hover:text-white cursor-pointer">
                     Delete
                   </Button>
                 </DialogFooter>
