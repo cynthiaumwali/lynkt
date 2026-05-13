@@ -32,8 +32,7 @@ export default function HomePage() {
   const handleDelete = async (id: string) => {
     try {
       await fetch(`/api/docs?id=${id}`, { method: 'DELETE' });
-
-      //to be optimized by using websockets or optimistic updates
+      //list reload will be optimized by using websockets or optimistic updates
       fetchDocuments();
     } catch (error) {
       Sentry.captureException(error, {

@@ -180,33 +180,6 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="terms"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm text-muted-foreground font-normal">
-                        I agree to the{" "}
-                        <Link href="#" className="text-primary hover:underline">
-                          Terms
-                        </Link>{" "}
-                        and{" "}
-                        <Link href="#" className="text-primary hover:underline">
-                          Conditions
-                        </Link>
-                      </FormLabel>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <Button type="submit" className="w-full bg-primary text-primary-foreground" disabled={isPending}>
                   {isPending ? (
                     <>

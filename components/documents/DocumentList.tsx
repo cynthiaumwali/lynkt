@@ -5,6 +5,8 @@ import { Document } from '@/types';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { useState } from 'react';
+import { set } from 'zod';
 
 interface DocumentListProps {
   documents: Document[];
@@ -13,8 +15,11 @@ interface DocumentListProps {
 
 export default function DocumentList({ documents, onDelete }: DocumentListProps) {
 
+  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+
   const handleDelete = (id: string) => {
     onDelete(id);
+    setOpenDialogId(null);
   }
 
   if (documents.length === 0) {
@@ -65,7 +70,7 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
                 Updated {formatDate(doc.updated_at)}
               </p>
             </div>
-            <Dialog>
+            <Dialog open={openDialogId === doc.id} onOpenChange={(open) => setOpenDialogId(open ? doc.id : null)}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 cursor-pointer hover:bg-background">
                   Delete
