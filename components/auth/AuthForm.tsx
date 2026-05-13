@@ -7,7 +7,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -110,7 +109,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                         <FormItem>
                           <FormLabel>First name</FormLabel>
                           <FormControl>
-                            <Input {...field} disabled={isPending} />
+                            <Input {...field} disabled={isPending} placeholder="First Name" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -123,7 +122,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                         <FormItem>
                           <FormLabel>Last name</FormLabel>
                           <FormControl>
-                            <Input {...field} disabled={isPending} />
+                            <Input {...field} disabled={isPending} placeholder="Last Name" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -139,7 +138,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                     <FormItem>
                       <FormLabel>Email address</FormLabel>
                       <FormControl>
-                        <Input {...field} type="email" disabled={isPending} />
+                        <Input {...field} type="email" disabled={isPending} placeholder="Email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,6 +158,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                             type={showPassword ? "text" : "password"}
                             className="pr-10"
                             disabled={isPending}
+                            placeholder="Password"
                           />
                           <Button
                             type="button"

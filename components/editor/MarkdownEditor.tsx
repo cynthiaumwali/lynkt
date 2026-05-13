@@ -25,7 +25,6 @@ export default function MarkdownEditor({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-      {/* Toolbar */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-750 flex items-center justify-between">
         <h2 className="font-semibold text-gray-900 dark:text-white">
           {showPreview ? 'Preview' : 'Editor'}
@@ -38,7 +37,6 @@ export default function MarkdownEditor({
         </button>
       </div>
 
-      {/* Content */}
       {showPreview ? (
         <div className="p-8 prose dark:prose-invert max-w-none min-h-150">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>

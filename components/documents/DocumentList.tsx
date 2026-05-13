@@ -43,13 +43,13 @@ export default function DocumentList({ documents, onDelete }: DocumentListProps)
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           Your Documents
         </h2>
         <Link
           href="/editor"
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-medium"
+          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-medium mt-6 sm:mt-0"
         >
           + Create Document
         </Link>
