@@ -164,7 +164,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent"
+                            className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent hover:cursor-pointer focus:outline-none focus:ring-0"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (
@@ -180,7 +180,7 @@ export default function AuthForm({ formType }: { formType: "login" | "signup" })
                   )}
                 />
 
-                <Button type="submit" className="w-full bg-primary text-primary-foreground" disabled={isPending}>
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:cursor-pointer" disabled={isPending}>
                   {isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
